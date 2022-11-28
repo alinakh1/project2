@@ -6935,104 +6935,107 @@ const parkTypesArray = [
     "Parkway"
 ]
 
-//STEP 1 --> we need to download a dropdown list of 3 options when we load the page
+var currentSearchType = null;
+var selectedNationalParks = null;
 window.onload = function init() {
-    const chooseOption = document.getElementById("chooseOption");
-    const parksByLocation = document.getElementById("parksByLocation");
-    const parksByType = document.getElementById("parksByType");
-    const statesFromArray = document.getElementById("statesFromArray");
-    createNewListOfSelectAnOption ();   //the function for programmatically dropdown of 3 options is below (***)
-    parksByLocation.style.display = "none";
-    parksByType.style.display = "none";
-    statesFromArray.style.display = "none";
-    // selectParkOutOfState ();
-    chooseOption.onchange = onChangeEvent;
-    // parksByLocation.onchange = selectParkOutOfState;
+
+    var locationOfPark = document.getElementById("locationOfPark");
+    locationOfPark.style.display = "none";
+
+    var typeOfPark = document.getElementById("typeOfPark");
+        typeOfPark.style.display = "none";
+ 
 }
 
 //     function selectParkOutOfState () {
-//         let parksArrayLoad = nationalParksArray.length;
-//         const statesFromArray = document.getElementById("statesFromArray");
-//         for (let i = 0; i < parksArrayLoad; i++) {
-//             let theOption = document.createElement("option");
-//             theOption.text = nationalParksArray[i].LocationName;
-//             statesFromArray.appendChild(theOption);
-//         }
-//          }
-//          statesFromArray.style.display = "block";
+      
 // }
 
-//  STEP 2 (***)This helps us to download dropdown list of 3 options programmatically
-function createNewListOfSelectAnOption () {
-    let chooseAnOption = ["Choose your option...","By Location" , "By Type"];
-    const chooseOption = document.getElementById("chooseOption");
-    let length = chooseAnOption.length;
+function searchType(event){
+    currentSearchType = event.target.value;
+
+    if(currentSearchType == "location"){
+
+        downloadStatesList ();
+        var typeOfPark = document.getElementById("typeOfPark");
+        typeOfPark.style.display = "none";
+        var locationOfPark = document.getElementById("locationOfPark");
+    locationOfPark.style.display = "block";
+    }
+
+  
+  else if (currentSearchType == "type") { 
+    downloadTypesList ();
+    var locationOfPark = document.getElementById("locationOfPark");
+    locationOfPark.style.display = "none";
+    var typeOfPark = document.getElementById("typeOfPark");
+        typeOfPark.style.display = "block";
+    
+  }
+
+}
+
+function downloadStatesList() {
+    const stateDropdown = document.getElementById("stateDropdown");
+    let length = locationsArray.length;
     for (let i = 0; i < length; i++) {
         let theOption = document.createElement("option");
-        theOption.text = chooseAnOption[i];
-        chooseOption.appendChild(theOption);
+        theOption.text = locationsArray[i];
+        stateDropdown.appendChild(theOption);
     }
-}
-//The end of dropdown 3 options(["Choose your option...","By Location" , "By Type"])
-//the first list that appears on the screen after we download the page
-//STEP 3 --> Describe what happens when you change 3 options
-function onChangeEvent() {
-    if (chooseOption.value == "By Location") {
-    downloadStatesList ();
-    parksByType.style.display = "none";
-}
-else if (chooseOption.value == "By Type") {
-    downloadTypesList ();
-    parksByLocation.style.display = "none";
-}
-else if (chooseOption.value == "Choose your option...") {
-    parksByLocation.style.display = "none";
-    parksByType.style.display = "none";
-}
+
 }
 
+function downloadTypesList() {
+    const parksByType = document.getElementById("typesDropdown");
+    let length = parkTypesArray.length;
+    for (let i = 0; i < length; i++) {
+        let theOption = document.createElement("option");
+        theOption.text = parkTypesArray[i];
+        parksByType.appendChild(theOption);
+    }
+    parksByType.style.display = "block";
+}
 
-function downloadStatesList () {
-    const parksByLocation = document.getElementById("parksByLocation");
-        let length = locationsArray.length;
-        for (let i = 0; i < length; i++) {
-            let theOption = document.createElement("option");
-            theOption.text = locationsArray[i];
-            parksByLocation.appendChild(theOption);
-        }
-          parksByLocation.style.display = "block";
+function chooseState(event, parkDropdown) {
+    
+    parkDropdown.innerText = null;
+    
+    var selectedState = event.target.value;
+  //  alert(selectedState);
 
-        }
-
-    function downloadTypesList () {
-        const parksByType = document.getElementById("parksByType");
-            let length = parkTypesArray.length;
-            for (let i = 0; i < length; i++) {
-                let theOption = document.createElement("option");
-                theOption.text = parkTypesArray[i];
-                parksByType.appendChild(theOption);
-            }
-            parksByType.style.display = "block";
-         }
-
-function parksByLocationSelect (event) {
-const chooseParkByState = document.getElementById("parksByLocation");
-const loadParksBasedOnState = document.getElementById("parksFromArray");
-var selectElement = event.target;
-    var selectedState = selectElement.value;
-    alert (selectedState);
     const length = nationalParksArray.length;
     for (let i = 0; i < length; i++) {
-        if (nationalParksArray[i].State == selectedState) {
-           let createOption = document.createElement("theOption");
-           createOption.text = nationalParksArray[i].LocationName;
-           loadParksBasedOnState.appendChild(createOption);
+  
+        if (nationalParksArray[i].State == selectedState){
+
+            createOption(parkDropdown, nationalParksArray[i].LocationName, nationalParksArray[i].LocationName);
+        }
+
+    }
+}
+
+function createOption(ddl, text, value) {
+    var opt = document.createElement('option');
+    opt.value = value;
+    opt.text = text;
+    ddl.options.add(opt);
+}
+  
+function chooseType (event, parksByType) {
+    parksByType.innerText = null;
+    
+    var selectedType = event.target.value;
+
+    const length = nationalParksArray.length;
+
+    for (let i = 0; i < length; i++) {
+        
+        if (nationalParksArray[i].LocationName.includes(selectedType)) {
+            createOption (parksByType, nationalParksArray[i].LocationName, nationalParksArray[i].LocationName);
         }
     }
 }
-   
-
-
 
 
 
